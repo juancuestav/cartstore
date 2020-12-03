@@ -39,7 +39,7 @@ public class ProductoRepository {
 	
 	// Guardar un producto
 	public void guardar_r(Producto p) {
-		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("BDCARRITOCOMPRAS.GUARDAR_PRODUCTO");
+		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ecommerce.GUARDAR_PRODUCTO");
         
         // Registrar los parámetros de entrada y salida
         storedProcedureQuery.registerStoredProcedureParameter("DESCRIPCION", String.class, ParameterMode.IN);
