@@ -11,7 +11,7 @@ class PagosController < ApplicationController
             plsql.registrar_pago(pago_numero_tarj, pago_nombre_tarj, pago_mes_venc, pago_anio_venc, pago_usu_id)           
         rescue OCIError => oracle_error
             if oracle_error.code.to_s == '20002'                
-                render json: {error: "Ha cumplido la fecha de vencimiento"}
+                render json: {error: "Su tarjeta ha vencido"}
             end
             if oracle_error.code.to_s == '1'                
                 render json: {error: "Ya tiene un metodo de pago registrado"}
@@ -44,21 +44,31 @@ class PagosController < ApplicationController
 
     def update_pago
         # Variables
-        pago_id = params[:pago_id]
+        pago_usu_id = params[:pago_usu_id]
         pago_numero_tarj = params[:pago_numero_tarj]
         pago_nombre_tarj = params[:pago_nombre_tarj].upcase
         pago_mes_venc = params[:pago_mes_venc]
         pago_anio_venc = params[:pago_anio_venc]
         
-        plsql.actualizar_pago(pago_id.to_i, pago_numero_tarj, pago_nombre_tarj, pago_mes_venc, pago_anio_venc)
-        render json: {exito: "Metodo de pago actualizado"}    
+        begin
+            plsql.actualizar_pago(pago_usu_id.to_i, pago_numero_tarj, pago_nombre_tarj, pago_mes_venc, pago_anio_venc)    
+        rescue OCIError => oracle_error
+            if oracle_error.code.to_s == '20002'                
+                render json: {error: "Su tarjeta ha vencido"}
+            end
+            if oracle_error.code.to_s == '1'                
+                render json: {error: "Ya tiene un metodo de pago registrado"}
+            end
+        else 
+            render json: {exito: "Metodo de pago actualizado"}   
+        end 
     end
 
     def delete_pago
         # Variables
-        pago_id = params[:pago_id]
+        pago_usu_id = params[:pago_usu_id]
         
-        plsql.eliminar_pago(pago_id.to_i)
+        plsql.eliminar_pago(pago_usu_id.to_i)
         render json: {exito: "Metodo de pago eliminado"}    
     end
 end

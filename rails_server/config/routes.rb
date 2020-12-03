@@ -7,6 +7,6 @@ Rails.application.routes.draw do
 
     post '/pago' => 'pagos#add_pago'
     get '/pago/:usu_id' => 'pagos#get_pagos'
-    put '/pago/:pago_id' => 'pagos#update_pago'
-    delete '/pago/:pago_id' => 'pagos#delete_pago'
+    put '/pago/:pago_usu_id' => 'pagos#update_pago'
+    delete '/pago/:pago_usu_id' => 'pagos#delete_pago'
 end
