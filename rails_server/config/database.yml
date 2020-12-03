@@ -1,0 +1,23 @@
+default: &default
+  adapter: oracle_enhanced
+  pool: 5
+  timeout: 5000
+
+development:
+  <<: *default  
+
+  database: //192.168.1.10:1521/orcl 
+  username: ecommerce
+  password: 12345
+
+test:
+  <<: *default
+  database: //192.168.1.10:1521/orcl 
+  username: ecommerce
+  password: 12345
+
+production:
+  <<: *default
+  database: //192.168.1.10:1521/orcl 
+  username: ecommerce
+  password: 12345
