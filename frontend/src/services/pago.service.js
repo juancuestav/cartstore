@@ -4,7 +4,7 @@ const API_URL = 'http://localhost:3000';
 
 class PagoService {
     add_pago(pago) {
-        return axios.post(`${API_URL}/direccion/`, {
+        return axios.post(`${API_URL}/pago/`, {
             pago_numero_tarj: pago.pago_numero_tarj,
             pago_nombre_tarj: pago.pago_nombre_tarj,
             pago_mes_venc: pago.pago_mes_venc,
@@ -17,15 +17,16 @@ class PagoService {
         return axios.get(`${API_URL}/pago/${user_id}`);
     }
 
-    delete_direccion(dir_id) {
-        return axios.delete(`${API_URL}/direccion/${dir_id}`);
+    delete_pago(user_id) {
+        return axios.delete(`${API_URL}/pago/${user_id}`);
     }
 
-    update_direccion(direccion) {
-        return axios.put(`${API_URL}/direccion/${direccion.dir_id}`, {
-            dir_direccion: direccion.dir_direccion,
-            dir_referencia: direccion.dir_referencia,
-            dir_telefono: direccion.dir_telefono
+    update_pago(pago) {
+        return axios.put(`${API_URL}/pago/${pago.pago_usu_id}`, {
+            pago_numero_tarj: pago.pago_numero_tarj,
+            pago_nombre_tarj: pago.pago_nombre_tarj,
+            pago_mes_venc: pago.pago_mes_venc,
+            pago_anio_venc: pago.pago_anio_venc,
         });
     }
 }

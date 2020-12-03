@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, json
 from flask_cors import CORS
-import jwt
+import jwt #pip install pyjwt
 import cx_Oracle
 from cryptography.fernet import Fernet
 

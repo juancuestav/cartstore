@@ -119,17 +119,36 @@
                       >Método de pago</v-card-title
                     >
                     <v-divider></v-divider>
-                    <v-card-text class="text--primary text-justify">
-                      <div>Dirección de domicilio para recibir sus pedidos</div>
+                    <v-card-text>
+                      <div>
+                        <FONT SIZE="2"
+                          ><strong>Nombre: </strong>
+                          {{ pago.pago_nombre_tarj }}</FONT
+                        >
+                      </div>
+                      <div>
+                        <FONT SIZE="2"
+                          ><strong>Número de tarjeta: </strong>
+                          {{ pago.pago_numero_tarj }}</FONT
+                        >
+                      </div>
+                      <div>
+                        <FONT SIZE="2"
+                          ><strong>MM/YYYY de vencimiento: </strong>
+                          {{ pago.pago_mes_venc }}/{{
+                            pago.pago_anio_venc
+                          }}</FONT
+                        >
+                      </div>
                     </v-card-text>
-                    <v-card-actions style="margin-top: -10px">
-                      <v-btn
-                        small
-                        block
-                        class="white--text"
-                        color="blue-grey accent-3"
-                        >Ver</v-btn
-                      >
+                    <v-divider></v-divider>
+                    <v-card-actions class="justify-center">
+                      <v-btn color="blue" text small @click="cargarInfoPago()">
+                        Editar
+                      </v-btn>
+                      <v-btn color="red" text small @click="eliminarPago()">
+                        Eliminar
+                      </v-btn>
                     </v-card-actions>
                   </v-card>
                 </div>
@@ -237,18 +256,18 @@
                 <v-text-field
                   label="Número de tarjeta"
                   counter="16"
-                  v-model="pago.pago_numero_tarj"
+                  v-model="pagoUpdate.pago_numero_tarj"
                   :rules="[
-                    rules.soloNumeros(pago.pago_numero_tarj),
-                    rules.campoVacio(pago.pago_numero_tarj),
-                    rules.diezSeisCaracteres(pago.pago_numero_tarj),
+                    rules.soloNumeros(pagoUpdate.pago_numero_tarj),
+                    rules.campoVacio(pagoUpdate.pago_numero_tarj),
+                    rules.diezSeisCaracteres(pagoUpdate.pago_numero_tarj),
                   ]"
                 ></v-text-field>
                 <v-text-field
                   label="Nombre del titular"
                   type="text"
-                  v-model="pago.pago_nombre_tarj"
-                  :rules="[rules.campoVacio(pago.pago_nombre_tarj)]"
+                  v-model="pagoUpdate.pago_nombre_tarj"
+                  :rules="[rules.campoVacio(pagoUpdate.pago_nombre_tarj)]"
                 ></v-text-field>
                 <v-row>
                   <v-col cols="12" sm="12">
@@ -273,8 +292,9 @@
                       </template>
                       <v-date-picker
                         v-model="date"
+                        locale="es-419"
                         type="month"
-                        no-title
+                        :show-current="date"
                         scrollable
                       >
                         <v-spacer></v-spacer>
@@ -320,6 +340,7 @@ export default {
   data() {
     return {
       pago: new Pago("", "", "", ""),
+      pagoUpdate: new Pago("", "", "", ""),
       dialogInfoUsuario: false,
       dialogPago: false,
       showPassword: false,
@@ -363,6 +384,9 @@ export default {
     closeDialog() {
       this.dialogInfoUsuario = false;
     },
+    closeDialogPago() {
+      this.dialogPago = false;
+    },
     actualizar() {
       this.user.us_id = this.currentUser.id;
       AuthService.updateUser(this.user).then((response) => {
@@ -382,6 +406,13 @@ export default {
       this.user.us_apellidos = usuario.us_apellidos;
       this.user.us_email = usuario.us_email;
       this.user.us_password = usuario.us_password;
+    },
+    cargarInfoPago() {
+      this.dialogPago = true;
+      this.titleDialogPago = "Actualizar";
+      this.buttonDialogPago = "Actualizar";
+      this.accionDialogPago = "Actualizar";
+      this.ListarMetodoPago();
     },
     limpiarFormulario() {
       this.user = new User("", "", "", "", "", "");
@@ -404,16 +435,62 @@ export default {
     },
     ActionMetodoPago(accion) {
       if (accion == "Registrar") {
-        this.pago.pago_mes_venc = Number(this.date.split("-")[1]);
-        this.pago.pago_anio_venc = Number(this.date.split("-")[0]);
-        this.pago.pago_usu_id = this.currentUser.id;
+        this.pagoUpdate.pago_mes_venc = Number(this.date.split("-")[1]);
+        this.pagoUpdate.pago_anio_venc = Number(this.date.split("-")[0]);
+        this.pagoUpdate.pago_usu_id = this.currentUser.id;
+        PagoService.add_pago(this.pagoUpdate).then((response) => {
+          if (response.data.error) {
+            this.showError({ message: response.data.error });
+          } else {
+            this.showSuccess({ message: response.data.exito });
+            this.closeDialogPago();
+            this.ListarMetodoPago();
+          }
+        });
       } else if (accion == "Actualizar") {
-        console.log("actualizar");
+        this.pagoUpdate.pago_mes_venc = Number(this.date.split("-")[1]);
+        this.pagoUpdate.pago_anio_venc = Number(this.date.split("-")[0]);
+        this.pagoUpdate.pago_usu_id = this.currentUser.id;
+        PagoService.update_pago(this.pagoUpdate).then((response) => {
+          if (response.data.error) {
+            this.showError({ message: response.data.error });
+          } else {
+            this.showSuccess({ message: response.data.exito });
+            this.closeDialogPago();
+            this.titleDialogPago = "";
+            this.ListarMetodoPago();
+          }
+        });
       }
     },
     ListarMetodoPago() {
       PagoService.get_pago(this.currentUser.id).then((response) => {
         this.metodoPago = response.data;
+        if (this.metodoPago.length > 0) {
+          if (this.titleDialogPago == "Actualizar") {
+            this.metodoPago = response.data;
+            this.pagoUpdate = this.metodoPago[0];
+            this.date = `${this.pago.pago_anio_venc}-${this.pago.pago_mes_venc}`;
+          } else {
+            this.metodoPago = response.data;
+            this.pago = this.metodoPago[0];
+            this.date = `${this.pago.pago_anio_venc}-${this.pago.pago_mes_venc}`;
+          }
+        }
+      });
+    },
+    eliminarPago() {
+      PagoService.delete_pago(this.currentUser.id).then((response) => {
+        if (response.data.error) {
+          this.showError({ message: response.data.error });
+        } else {
+          this.showSuccess({ message: response.data.exito });
+          this.ListarMetodoPago();
+          this.pagoUpdate = new Pago("", "", "", "");
+          this.pago = new Pago("", "", "", "");
+          this.date = new Date().toISOString().substr(0, 7);
+          this.$refs.formPago.resetValidation();
+        }
       });
     },
     UpdateIsValid() {
