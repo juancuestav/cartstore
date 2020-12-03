@@ -1,12 +1,15 @@
 package com.utmach.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,16 +21,6 @@ import com.utmach.entity.Producto;
 import com.utmach.service.ProductoService;
 
 //Cross origin
-
-/*
-spring.datasource.url=jdbc:oracle:thin:@centos:1521/orcl
-spring.datasource.username=BDCARRITOCOMPRAS
-spring.datasource.password=BDCARRITOCOMPRAS
-spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDriver
-#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
-spring.jpa.show-sql=true
-spring.jpa.hibernate.ddl-auto=update
- * */
 
 @RestController
 @RequestMapping("productos")
@@ -46,7 +39,7 @@ public class ProductoController {
 		try {
 			productoService.guardar_s(foto, descripcion, nombre, precio, stock);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return new ResponseEntity<Object>("Archivo subido correctamente", HttpStatus.OK);
@@ -59,12 +52,32 @@ public class ProductoController {
 		return new ResponseEntity(lista, HttpStatus.OK);
 	}
 	
-	/*@DeleteMapping("/eliminar/{id}")
-	public void eliminar(@PathVariable("id") Integer id) {
-		productoService.deleteById(id);
+	@CrossOrigin(origins = "http://localhost:8090")
+	@GetMapping("/foto/{id}")
+	public ResponseEntity<?> foto_c(@PathVariable("id") Integer id) {
+		byte[] foto = null;
+		try {
+			foto = productoService.foto_s(id);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new ResponseEntity(foto, HttpStatus.OK);
 	}
 	
-	@PutMapping("/actualizar")
+	@CrossOrigin(origins = "http://localhost:8090")
+	@DeleteMapping("/eliminar/{id}")
+	public ResponseEntity<?> eliminar(@PathVariable("id") Integer id) {
+		System.out.println("Valor de id recibido: " + id);
+		try {
+			productoService.eliminar_s(id);
+		}catch (Exception e) {
+			//e.printStackTrace();
+		}
+		return new ResponseEntity<Object>("Producto eliminado!", HttpStatus.OK);
+	}
+	
+	/*@PutMapping("/actualizar")
 	public void actualizar(@RequestBody Producto p) {
 		productoService.save(p);
 	}*/

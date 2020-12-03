@@ -21,23 +21,24 @@ public class ProductoService {
 	
 	private String url_imagenes = ".//src//main//resources//imagenes//";
 	
+	// Listar productos
 	public List<Producto> listar_s(){
-		//return productoRepository.findAll();
-		/*List<Object[]> results = productoRepository.listarProcedure();
-		System.out.print(results);*/
-	    /*storedProcedureResponse.stream().map(result -> new BusinessObject(
-	        (String) result[0],
-		    (Long) result[1]
-	    )).collect(Collectors.toList());*/
         return productoRepository.listarProcedure();
     }
 	
+	public byte[] foto_s(Integer id) throws IOException{
+		Path path = Paths.get(productoRepository.foto_r(id));
+		byte[] foto = Files.readAllBytes(path);
+        return foto;
+    }
+	
+	// Guardar producto
 	public void guardar_s(MultipartFile foto, String descripcion, String nombre, Double precio, Integer stock) throws IOException{
 		
 		if (!foto.isEmpty()) {
 			byte[] bytes = foto.getBytes();
 			Path path = Paths.get(url_imagenes + foto.getOriginalFilename());
-			Files.write(path, bytes);
+			Files.write(path, bytes);	// Guarda en el fs
 			
 			Producto p = new Producto();
 			p.setDescripcion(descripcion);
@@ -48,7 +49,19 @@ public class ProductoService {
 			
 			productoRepository.guardar_r(p);
 		}
-		
     }
+	
+	// Eliminar un producto
+	public void eliminar_s(int id) {
+		String foto = productoRepository.eliminar_r(id);
+		System.out.println(foto);
+		Path path = Paths.get(foto);
+		try {
+			Files.delete(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

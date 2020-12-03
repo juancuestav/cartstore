@@ -9,6 +9,9 @@ import VueNotifications from 'vue-notifications'
 import iziToast from 'izitoast'
 import 'izitoast/dist/css/iziToast.min.css'
 
+/*Vue.use(VueNotifications, options)
+Vue.use(VueAxios, axios)*/
+
 iziToast.settings({
   close: false,
   displayMode: 1
