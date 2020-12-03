@@ -19,30 +19,31 @@ public class ProductoService {
 	@Autowired
     ProductoRepository productoRepository;
 	
-	private String url_imagenes = ".//src//main//resources//imagenes//";
+	private String url_imagenes = ".//src//main//resources//static//";
 	
 	// Listar productos
 	public List<Producto> listar_s(){
         return productoRepository.listarProcedure();
     }
 	
-	public byte[] foto_s(Integer id) throws IOException{
+	/*public byte[] foto_s(Integer id) throws IOException{
 		Path path = Paths.get(productoRepository.foto_r(id));
 		byte[] foto = Files.readAllBytes(path);
         return foto;
-    }
+    }*/
 	
 	// Guardar producto
 	public void guardar_s(MultipartFile foto, String descripcion, String nombre, Double precio, Integer stock) throws IOException{
 		
 		if (!foto.isEmpty()) {
 			byte[] bytes = foto.getBytes();
-			Path path = Paths.get(url_imagenes + foto.getOriginalFilename());
+			String name = foto.getOriginalFilename();
+			Path path = Paths.get(url_imagenes + name);
 			Files.write(path, bytes);	// Guarda en el fs
 			
 			Producto p = new Producto();
 			p.setDescripcion(descripcion);
-			p.setFoto(path.toString());
+			p.setFoto(name);
 			p.setNombres(nombre);
 			p.setPrecio(precio);
 			p.setStock(stock);
@@ -51,13 +52,60 @@ public class ProductoService {
 		}
     }
 	
+	
+	// ACTUALIZAR
+	public void actualizarProducto_s(Integer id, MultipartFile foto, String descripcion, String nombre, Double precio, Integer stock) throws IOException{
+		
+		Producto p = new Producto();
+		
+		if (!foto.isEmpty()) {
+			// Guarda la nueva foto
+			byte[] bytes = foto.getBytes();
+			String name = foto.getOriginalFilename();
+			Path path = Paths.get(url_imagenes + name);
+			Files.write(path, bytes);	
+			
+			// Elimina la antigua foto
+			eliminarFotoFS(productoRepository.getFoto_r(id));
+			
+			p.setId(id);
+			p.setDescripcion(descripcion);
+			p.setFoto(name);
+			p.setNombres(nombre);
+			p.setPrecio(precio);
+			p.setStock(stock);
+			
+			
+		}else {
+			
+			p.setId(id);
+			p.setDescripcion(descripcion);
+			p.setNombres(nombre);
+			p.setPrecio(precio);
+			p.setStock(stock);
+			
+			System.out.print("Actualizar sin foto(Valor de foto): " + p.getFoto());
+		}
+		
+		productoRepository.actualizar_r(p);
+    }
+	
+	
+	
+
 	// Eliminar un producto
 	public void eliminar_s(int id) {
 		String foto = productoRepository.eliminar_r(id);
-		System.out.println(foto);
-		Path path = Paths.get(foto);
+		eliminarFotoFS(foto);
+	}
+
+	
+	// Elimina la foto del Sistema de Archivos
+	private void eliminarFotoFS(String foto) {
+		System.out.println(url_imagenes + foto);
+		Path path = Paths.get(url_imagenes + foto);
 		try {
-			Files.delete(path);
+			Files.deleteIfExists(path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

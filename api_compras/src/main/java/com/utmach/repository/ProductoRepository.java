@@ -36,7 +36,7 @@ public class ProductoRepository {
 	}
 	
 	// Obtener ruta de foto de un producto
-		public String foto_r(Integer id) {
+		/*public String foto_r(Integer id) {
 			StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ECOMMERCE.FOTO_PRODUCTO");
 			storedProcedureQuery.registerStoredProcedureParameter("ID", Integer.class, ParameterMode.IN);
 			storedProcedureQuery.registerStoredProcedureParameter("FOTO", String.class, ParameterMode.OUT);
@@ -45,7 +45,8 @@ public class ProductoRepository {
 			storedProcedureQuery.execute();
 			String foto = (String) storedProcedureQuery.getOutputParameterValue("FOTO");
 			return foto;
-		}
+		}*/
+	
 	
 	// Guardar un producto
 	public void guardar_r(Producto p) {
@@ -66,6 +67,61 @@ public class ProductoRepository {
  
         storedProcedureQuery.execute();
 	}
+	
+	
+	
+	public void actualizar_r(Producto p) {
+		
+		StoredProcedureQuery storedProcedureQuery;
+		
+		if(p.getFoto() != null) {
+			storedProcedureQuery = entityManager.createStoredProcedureQuery("ecommerce.ACTUALIZAR_PRODUCTO_CON_FOTO");
+			
+			storedProcedureQuery.registerStoredProcedureParameter("ID", Integer.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("DESCRIPCION", String.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("FOTO", String.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("NOMBRE", String.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("PRECIO", Double.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("STOCK", Integer.class, ParameterMode.IN);
+	        //storedProcedureQuery.registerStoredProcedureParameter("OUTPUT_PROCEDURE_PARAMETER_NAME2", Long.class, ParameterMode.OUT);
+	 
+	        storedProcedureQuery.setParameter("ID", p.getId());
+	        storedProcedureQuery.setParameter("DESCRIPCION", p.getDescripcion());
+	        storedProcedureQuery.setParameter("FOTO", p.getFoto());
+	        storedProcedureQuery.setParameter("NOMBRE", p.getNombre());
+	        storedProcedureQuery.setParameter("PRECIO", p.getPrecio());
+	        storedProcedureQuery.setParameter("STOCK", p.getStock());
+		}else {
+			storedProcedureQuery = entityManager.createStoredProcedureQuery("ecommerce.ACTUALIZAR_PRODUCTO_SIN_FOTO");
+	        
+			storedProcedureQuery.registerStoredProcedureParameter("ID", Integer.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("DESCRIPCION", String.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("NOMBRE", String.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("PRECIO", Double.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("STOCK", Integer.class, ParameterMode.IN);
+	 
+	        storedProcedureQuery.setParameter("ID", p.getId());
+	        storedProcedureQuery.setParameter("DESCRIPCION", p.getDescripcion());
+	        storedProcedureQuery.setParameter("NOMBRE", p.getNombre());
+	        storedProcedureQuery.setParameter("PRECIO", p.getPrecio());
+	        storedProcedureQuery.setParameter("STOCK", p.getStock());
+		}
+ 
+        storedProcedureQuery.execute();
+	}
+	
+	// Obtener nombre de foto
+	public String getFoto_r(Integer id) {
+		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ECOMMERCE.FOTO_PRODUCTO");
+		storedProcedureQuery.registerStoredProcedureParameter("ID", Integer.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("FOTO", String.class, ParameterMode.OUT);
+		
+		storedProcedureQuery.setParameter("ID", id);
+		storedProcedureQuery.execute();
+		String foto = (String) storedProcedureQuery.getOutputParameterValue("FOTO");
+		return foto;
+	}
+	
 	
 	// Eliminar un producto
 	public String eliminar_r(Integer id) {

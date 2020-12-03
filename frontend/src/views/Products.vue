@@ -1,137 +1,5 @@
 <template>
   <v-container>
-    <!--<v-row>
-      <v-col cols="12" md="5" class="pa-4">
-        
-        <v-form class="elevation-1">
-          <h4 pa-4>Registro/Actualización de productos</h4>
-          <v-text-field v-model="nombre" label="Nombre"></v-text-field>
-          <v-textarea v-model="descripcion" autocomplete="email" label="Descripción" rows="3"></v-textarea>
-          
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field v-model="precio" label="Precio" type="number" ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field v-model="stock" label="Stock" type="number" ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-file-input v-model="foto" type="file" accept="image/*" label="Subir foto" @change="obtenerImagen"></v-file-input>
-            </v-col>
-            <v-col cols="12" md="6" align-center>
-              <v-img :src="imageUrl" max-width="145" max-height="120" class="d-flex align-center"></v-img>
-            </v-col>
-          </v-row>
-          
-          <v-btn color="green lighten-2 accent-3" text @click="guardar">Guardar</v-btn>
-          <v-btn color="light-blue darken-1 accent-2" text> Limpiar </v-btn>
-
-        </v-form>
-
-      </v-col>
-
-      <v-col cols="12" md="7" xs="12">
-        
-            <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details color="blue-grey accent-3"></v-text-field>
-          
-          <v-data-table :headers="headers" :items="lista_productos" class="elevation-1">
-            <v-dialog v-model="dialog" max-width="500px" >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">New Item</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="close"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="save"
-              >
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-            <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-              <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-            </template>
-          </v-data-table>
-       
-      </v-col>
-
-    </v-row>-->
-
   <v-data-table :headers="headers" :items="lista_productos"  class="elevation-1" >
     <template v-slot:top>
 
@@ -189,6 +57,7 @@
             
           </v-card>
         </v-dialog>
+        <!-- FIN: Dialogo con formulario para crear productos-->
 
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
@@ -221,6 +90,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      servidor: "http://localhost:8080/",
       dialog: false,
       dialogDelete: false,
       editedIndex: -1,
@@ -244,6 +114,7 @@ export default {
       headers: [
         { text: "Nombre", value: "nombre", align: "center" },
         { text: "Precio", value: "precio", align: "center" },
+        { text: "Foto", value: "foto", align: "center" },
         { text: "Stock", value: "stock", align: "center"},
         { text: "Acciones", value: "actions", align: "center", sortable: false},
       ],
@@ -320,6 +191,8 @@ export default {
       console.log(item)
       this.editedIndex = this.lista_productos.indexOf(item)
       this.editedItem = Object.assign({}, item)
+      this.imageUrl = this.servidor + this.editedItem.foto;
+      console.log(this.imageUrl);
       this.dialog = true
     },
 
