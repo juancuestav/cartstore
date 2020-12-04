@@ -11,8 +11,12 @@ class ProductService {
         return axios.get(`${API_URL}/productos/listar`);
     }
 
-    delete_products(prod_id) {
+    delete_product(prod_id) {
         return axios.delete(`${API_URL}/productos/eliminar/${prod_id}`);
+    }
+
+    update_product(prod_id, formData) {
+        return axios.put(`${API_URL}/productos/actualizar/${prod_id}`, formData);
     }
 }
 

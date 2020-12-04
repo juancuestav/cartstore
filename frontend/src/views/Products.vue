@@ -3,6 +3,7 @@
     <v-data-table
       :headers="headers"
       :items="lista_productos"
+      :items-per-page="5"
       class="elevation-1"
     >
       <template v-slot:top>
@@ -42,7 +43,7 @@
                         :rules="[rules.campoVacio(editedItem.descripcion)]"
                         autocomplete="email"
                         label="Descripción"
-                        rows="3"
+                        rows="2"
                         color="blue-grey accent-3"
                       ></v-textarea>
 
@@ -75,32 +76,64 @@
                         </v-col>
                       </v-row>
 
-                      <v-row>
-                        <v-col cols="12" md="6">
-                          <v-file-input
-                            color="blue-grey accent-3"
-                            v-model="editedItem.foto"
-                            :rules="[rules.campoVacio(editedItem.foto)]"
-                            type="file"
-                            accept="image/*"
-                            label="Subir foto"
-                            @change="obtenerImagen"
-                          ></v-file-input>
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          md="6"
-                          class="d-flex flex-column align-center"
-                        >
-                          <v-img
-                            contain
-                            :src="imageUrl"
-                            max-width="145"
-                            max-height="150"
-                            class="d-flex align-center"
-                          ></v-img>
-                        </v-col>
-                      </v-row>
+                      <!-- SI ES REGISTRAR SE VALIDA QUE SE CARGUE LA IMAGEN -->
+                      <div v-if="formTitle == 'Registrar'">
+                        <v-row>
+                          <v-col cols="12" md="6">
+                            <v-file-input
+                              color="blue-grey accent-3"
+                              v-model="editedItem.foto"
+                              :rules="[rules.campoVacio(editedItem.foto)]"
+                              type="file"
+                              accept="image/*"
+                              label="Subir foto"
+                              @change="obtenerImagen"
+                            ></v-file-input>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            md="6"
+                            class="d-flex flex-column align-center"
+                          >
+                            <v-img
+                              contain
+                              :src="imageUrl"
+                              max-width="145"
+                              max-height="150"
+                              class="d-flex align-center"
+                            ></v-img>
+                          </v-col>
+                        </v-row>
+                      </div>
+
+                      <!-- SI ES EDITAR, NO SE VALIDA QUE SE CARGUE LA IMAGEN -->
+                      <div v-else>
+                        <v-row>
+                          <v-col cols="12" md="6">
+                            <v-file-input
+                              color="blue-grey accent-3"
+                              v-model="editedItem.foto"
+                              type="file"
+                              accept="image/*"
+                              label="Subir nueva foto"
+                              @change="obtenerImagen"
+                            ></v-file-input>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            md="6"
+                            class="d-flex flex-column align-center"
+                          >
+                            <v-img
+                              contain
+                              :src="imageUrl"
+                              max-width="145"
+                              max-height="150"
+                              class="d-flex align-center"
+                            ></v-img>
+                          </v-col>
+                        </v-row>
+                      </div>
                     </v-form>
                   </v-card-text>
 
@@ -159,7 +192,9 @@
         </div>
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-icon class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+        <v-icon class="mr-2" @click="cargarInfoProduct(item)"
+          >mdi-pencil</v-icon
+        >
         <v-icon @click="deleteItem(item.id)"> mdi-delete</v-icon>
       </template>
     </v-data-table>
@@ -248,7 +283,7 @@ export default {
             this.lista_productos.push(producto);
           });
         });
-      }, 300);
+      }, 800);
     },
     // Muestra la imagen cargada en un v-img
     obtenerImagen(event) {
@@ -269,24 +304,44 @@ export default {
 
     // ENVIA solicitud POST a servidor
     async guardar() {
-      var formdata = new FormData();
-      formdata.append("nombre", this.editedItem.nombre);
-      formdata.append("descripcion", this.editedItem.descripcion);
-      formdata.append("precio", this.editedItem.precio);
-      formdata.append("stock", this.editedItem.stock);
-      formdata.append("foto", this.editedItem.foto);
+      if (this.formTitle == "Registrar") {
+        let formdata = new FormData();
+        formdata.append("nombre", this.editedItem.nombre);
+        formdata.append("descripcion", this.editedItem.descripcion);
+        formdata.append("precio", this.editedItem.precio);
+        formdata.append("stock", this.editedItem.stock);
+        formdata.append("foto", this.editedItem.foto);
 
-      let response = await ProductService.add_product(formdata);
-      if (response.status == 200) {
-        this.close();
-        this.showSuccess({ message: response.data });
-        this.$refs.formProduct.resetValidation();
-        this.listarProductos();
+        let response = await ProductService.add_product(formdata);
+        if (response.status == 200) {
+          this.close();
+          this.showSuccess({ message: response.data });
+          this.$refs.formProduct.resetValidation();
+          this.listarProductos();
+        }
+      } else {
+        let formdata = new FormData();
+        formdata.append("nombre", this.editedItem.nombre);
+        formdata.append("descripcion", this.editedItem.descripcion);
+        formdata.append("precio", this.editedItem.precio);
+        formdata.append("stock", this.editedItem.stock);
+        formdata.append("foto", this.editedItem.foto);
+        console.log(formdata.get("foto"));
+
+        ProductService.update_product(this.editedItem.id, formdata).then(
+          (response) => {
+            if (response.status == 200) {
+              this.showSuccess({ message: response.data });
+              this.close();
+              this.listarProductos();
+            }
+          }
+        );
       }
     },
 
     // Muestra dialogo principal y guarda en memoria el indice del producto al que hizo clic
-    editItem(item) {
+    cargarInfoProduct(item) {
       this.editedIndex = this.lista_productos.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.imageUrl = `${this.servidor}${this.editedItem.foto}`;
@@ -304,15 +359,13 @@ export default {
 
     // ELIMINA producto de la tabla de acuerdo a su indice
     deleteItemConfirm() {
-      ProductService.delete_products(this.prod_id_to_delete).then(
-        (response) => {
-          if (response.status == 200) {
-            this.showSuccess({ message: response.data });
-            this.closeDelete();
-            this.listarProductos();
-          }
+      ProductService.delete_product(this.prod_id_to_delete).then((response) => {
+        if (response.status == 200) {
+          this.showSuccess({ message: response.data });
+          this.closeDelete();
+          this.listarProductos();
         }
-      );
+      });
     },
 
     // Cierra dialogo y resetea los valores de editedItem
