@@ -98,40 +98,28 @@ export default {
       ],
     };
   },
-  created: function() {
+  mounted () {
+    this.cargarInfo()
+    //console.log(this.$store.state.carrito_data_producto)
     
-    //console.log("Este es el sub total CR: " + this.sub_total)
-    //console.log("Carrito lleno")
-    //console.log(this.carrito_list)
+    //console.log(this.sub_total)
   },
-  mounted: function(){
-    console.log("Dentro de created")
-    this.carrito_indices.forEach(indice => {
+  methods: {
+    cargarInfo(){
+      this.carrito_indices.forEach(indice => {
       axios.get("http://localhost:8080/productos/getproductscarrito/" + indice).then((response) => {
-        //console.log(response.data);
-        //this.producto = Object.assign({}, response.data)
-        var parsedobj = JSON.parse(JSON.stringify(response.data))
-        console.log(parsedobj)
-        this.carrito_list.push(parsedobj);
-        //console.log("Este es el precio: " + response.data.precio)
-        //console.log("Este es el sub total: " + this.sub_total)
+        
+        this.carrito_list.push(response.data);
+        this.sub_total += response.data.precio;
+        this.$store.state.carrito_data_producto.push(response.data)
+        
       });
-    })
-    //this.$nextTick(() => {
-    
-      console.log("Dentro de mounted")
+
       console.log(this.carrito_list)
-      console.log(this.carrito_list[0])
-    this.carrito_list.forEach(item => {
-      console.log("Dentro de for each")
-      this.sub_total += item.precio;
-      console.log("Este es el sub total MOU: " + this.sub_total)
-      this.iva = this.sub_total * 0.12;
-      //this.iva = 35;
-      console.log("Este es el IVA MOU: " + this.iva)
-      this.total_pagar += this.iva + this.sub_total;
-    });
-    //})
+    
+      })
+    }
   }
-};
+
+}
 </script>
