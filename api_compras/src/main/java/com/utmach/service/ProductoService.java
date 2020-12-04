@@ -30,11 +30,7 @@ public class ProductoService {
         return productoRepository.getProducto_r(id);
     }
 	
-	/*public byte[] foto_s(Integer id) throws IOException{
-		Path path = Paths.get(productoRepository.foto_r(id));
-		byte[] foto = Files.readAllBytes(path);
-        return foto;
-    }*/
+	
 	
 	// Guardar producto
 	public void guardar_s(MultipartFile foto, String descripcion, String nombre, Double precio, Integer stock) throws IOException{
@@ -112,6 +108,15 @@ public class ProductoService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public void comprar_s(Integer usuario_id, Double subtotal, Double iva, Double total) {
+		productoRepository.comprar_r(usuario_id, subtotal, iva, total);
+	}
+	
+	public void detalle_compra_s(Integer prod_id, Integer cantidad) {
+		productoRepository.detalle_compra_r(prod_id, cantidad);
 	}
 
 }

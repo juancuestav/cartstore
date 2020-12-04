@@ -108,9 +108,8 @@
                     color="blue"
                     class="ma-2 white--text"
                     block
-                    :disabled="!loggedIn"
-                    >Realizar Pago</v-btn
-                  >
+                    
+                    >Realizar Pago</v-btn><!-- :disabled="!loggedIn"-->
                 </v-col>
               </v-row>
             </v-container>
@@ -123,6 +122,8 @@
 
 <script>
 import axios from "axios";
+import ProductService from "../services/products.service";
+
 export default {
   data() {
     return {
@@ -279,8 +280,32 @@ export default {
           Number(this.carrito_list[index].subtotalXprod);
       }
     },
-    realizarPago() {
-      console.log("Tienes que pagar: " + this.sub_total);
+    async realizarPago() {
+      
+      let formdata = new FormData();
+      formdata.append("USUARIO_ID", 1);
+      formdata.append("SUBTOTAL", this.sub_total);
+      formdata.append("IVA", this.iva);
+      formdata.append("TOTAL", this.total_pagar);
+
+      let response = await ProductService.registrar_compra(formdata);
+      if (response.status == 200) {
+        console.log("Registro de compra correcto!")
+      }
+
+
+      let longitud = this.$store.state.indiceCarrito.length;
+      for(let i = 0 ; i < longitud ; i++){
+        let formdata = new FormData();
+        formdata.append("PRODUCT_ID", this.$store.state.indiceCarrito[i]);
+        formdata.append("CANTIDAD", this.carrito_list[i].cantidad_comprar);
+
+        let response = await ProductService.registrar_detalle_compra(formdata);
+        if (response.status == 200) {
+          console.log("Registro de detalle de compra correcto!")
+        }
+      }
+
     },
   },
 };

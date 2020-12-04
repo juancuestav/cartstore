@@ -26,6 +26,7 @@ import org.hibernate.annotations.NamedNativeQuery;
     })
 })*/
 
+// Funcion necesaria para trabajar con CURSORES devueltos por Oracle
 @NamedNativeQuery (
         name = "LISTAR_PRODUCTOS", 
         callable = true, 

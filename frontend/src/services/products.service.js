@@ -18,6 +18,14 @@ class ProductService {
     update_product(prod_id, formData) {
         return axios.put(`${API_URL}/productos/actualizar/${prod_id}`, formData);
     }
+
+    registrar_compra(formData) {
+        return axios.post(`${API_URL}/productos/comprar`, formData);
+    }
+
+    registrar_detalle_compra(formData) {
+        return axios.post(`${API_URL}/productos/detallecompra`, formData);
+    }
 }
 
 export default new ProductService();
