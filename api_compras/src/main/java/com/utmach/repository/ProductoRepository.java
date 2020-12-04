@@ -1,5 +1,6 @@
 package com.utmach.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -33,6 +34,56 @@ public class ProductoRepository {
 			System.out.println(p.getNombre());
 		}
 		return lista;
+	}
+	
+	// Recibe la lista de los productos agregados en el carrito de compras
+	// Devuelve una lista con información de los productos buscados
+	/*public List<Producto> getProductos4Id_r(Integer id) {
+		List<Producto> lista_productos = new ArrayList<>();
+		for(Integer index : indices) {
+			lista_productos.add(getProducto(index));
+		}
+		return lista_productos;
+	}*/
+	
+	public Producto getProducto_r(Integer id) {
+		
+		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ECOMMERCE.OBTENER_PRODUCTO");
+		storedProcedureQuery.registerStoredProcedureParameter("ID", Integer.class, ParameterMode.IN);
+		storedProcedureQuery.registerStoredProcedureParameter("DESCRIPCION", String.class, ParameterMode.OUT);
+        storedProcedureQuery.registerStoredProcedureParameter("FOTO", String.class, ParameterMode.OUT);
+        storedProcedureQuery.registerStoredProcedureParameter("NOMBRE", String.class, ParameterMode.OUT);
+        storedProcedureQuery.registerStoredProcedureParameter("PRECIO", Double.class, ParameterMode.OUT);
+        storedProcedureQuery.registerStoredProcedureParameter("STOCK", Integer.class, ParameterMode.OUT);
+		
+		storedProcedureQuery.setParameter("ID", id);
+		storedProcedureQuery.execute();
+		String descripcion = (String) storedProcedureQuery.getOutputParameterValue("DESCRIPCION");
+		String foto = (String) storedProcedureQuery.getOutputParameterValue("FOTO");
+		String nombre = (String) storedProcedureQuery.getOutputParameterValue("NOMBRE");
+		Double precio = (Double) storedProcedureQuery.getOutputParameterValue("PRECIO");
+		Integer stock = (Integer) storedProcedureQuery.getOutputParameterValue("STOCK");
+		
+		Producto p = new Producto();
+		p.setId(id);
+		p.setDescripcion(descripcion);
+		p.setFoto(foto);
+		p.setNombres(nombre);
+		p.setPrecio(precio);
+		p.setStock(stock);
+		return p;
+		
+		
+		/*TypedQuery<Producto> q = entityManager.createNamedQuery("OBTENER_PRODUCTO", Producto.class);
+		q.setParameter("?", 101);
+		
+		Producto prod = null;
+		List<Producto> lista = q.getResultList();
+		System.out.print("Valores de la lista: " + lista);
+		for(Producto p : lista) {
+			prod = p;
+			System.out.println(p.getNombre());
+		}*/
 	}
 	
 	// Obtener ruta de foto de un producto
@@ -109,6 +160,8 @@ public class ProductoRepository {
  
         storedProcedureQuery.execute();
 	}
+
+	
 	
 	// Obtener nombre de foto
 	public String getFoto_r(Integer id) {
@@ -121,6 +174,7 @@ public class ProductoRepository {
 		String foto = (String) storedProcedureQuery.getOutputParameterValue("FOTO");
 		return foto;
 	}
+
 	
 	
 	// Eliminar un producto

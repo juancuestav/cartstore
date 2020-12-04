@@ -26,6 +26,10 @@ public class ProductoService {
         return productoRepository.listarProcedure();
     }
 	
+	public Producto getProductos4Id_s(Integer id){
+        return productoRepository.getProducto_r(id);
+    }
+	
 	/*public byte[] foto_s(Integer id) throws IOException{
 		Path path = Paths.get(productoRepository.foto_r(id));
 		byte[] foto = Files.readAllBytes(path);
