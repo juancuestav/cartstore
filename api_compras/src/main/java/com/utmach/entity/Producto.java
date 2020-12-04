@@ -32,6 +32,12 @@ import org.hibernate.annotations.NamedNativeQuery;
         query = "{? = call LISTAR_PRODUCTOS}",
         resultClass = Producto.class)
 
+@NamedNativeQuery (
+        name = "OBTENER_PRODUCTO", 
+        callable = true, 
+        query = "{? = call OBTENER_PRODUCTO(?)}",
+        resultClass = Producto.class)
+
 @Entity
 @Table(name="PRODUCTO")
 public class Producto{

@@ -73,6 +73,13 @@ public class ProductoController {
 	
 	
 	
+	@CrossOrigin(origins = "http://localhost:8090")
+	@GetMapping("/getproductscarrito/{ID}")
+	public ResponseEntity<Producto> getProducts4Id_c(@PathVariable("ID") Integer id) {
+		Producto lista = productoService.getProductos4Id_s(id);
+		return new ResponseEntity(lista, HttpStatus.OK);
+	}
+	
 	/*@CrossOrigin(origins = "http://localhost:8090")
 	@GetMapping("/foto/{id}")
 	public ResponseEntity<?> foto_c(@PathVariable("id") Integer id) {

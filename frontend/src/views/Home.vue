@@ -1,28 +1,32 @@
 <template>
   <v-container>
     <v-layout wrap>
-      <v-flex v-for="producto in lista_productos" :key="producto.nombre">
-        <v-card class="mx-auto" max-width="320" style="margin: 10px">
-          <!-- <v-img height="200" src="https://cdn.vuetifyjs.com/images/cards/cooking.png"></v-img> -->
-          <v-img height="200" :src=producto.foto></v-img>
+      <v-flex v-for="producto in lista_productos" :key="producto.id">
+
+        <v-card class="mx-auto" max-width="340" style="margin: 10px">
 
           <v-card-title>
-            <v-row class="mx-5">
-              <span class="title blue--text">Producto</span>
+            <v-row class="mx-1">
+              <v-icon class="black--text" medium left >mdi-store</v-icon>
+              <span class="title black--text">{{producto.nombre}}</span>
               <v-spacer></v-spacer>
-              <span class="title"> $ 0.00</span>
+              <v-icon class="black--text" medium left >mdi-arrow-up-bold-box-outline</v-icon>
+              <span class="title">{{producto.stock}}</span>
             </v-row>
           </v-card-title>
 
           <v-card-text>
-            <div class="mx-5 text-justify">
+            <v-img contain height="130" :src=producto.foto></v-img>
+            <div class="mt-6 mx-1 text-justify">
               {{ producto.descripcion }}
             </div>
           </v-card-text>
 
           <v-card-actions class="justify-center">
-            <v-btn color="blue-grey accent-3" text> Añadir a carrito </v-btn>
-            <v-btn color="blue-grey accent-3" text> Comprar </v-btn>
+            <v-btn color="blue" outlined > 
+              Agregar al carrito <v-icon medium right >mdi-cart</v-icon>
+            </v-btn>
+            <v-btn color="error" depressed> Comprar </v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -39,51 +43,6 @@ export default {
       servidor: "http://localhost:8080/",
       imagen: null,
       lista_productos: [],
-      producto: {
-        nombre: "",
-        descripcion: "",
-        precio: "",
-        stock: "",
-        foto: "",
-      },
-      books: [
-        {
-          prod_nombre: "book1",
-          prod_precio: 3,
-          prod_stock: "2016",
-          prod_descripcion: "kjsahdjksagbdhasgdyuhasgdhabsdhasgvdhyasfdgahsygasyudg",
-        },
-        {
-          prod_nombre: "book2",
-          prod_precio: 3,
-          prod_stock: "2016",
-          prod_descripcion: "2016",
-        },
-        {
-          prod_nombre: "book3",
-          prod_precio: 3,
-          prod_stock: "2016",
-          prod_descripcion: "2016",
-        },
-        {
-          prod_nombre: "book4",
-          prod_precio: 3,
-          prod_stock: "2016",
-          prod_descripcion: "2016",
-        },
-        {
-          prod_nombre: "book5",
-          prod_precio: 3,
-          prod_stock: "2016",
-          prod_descripcion: "2016",
-        },
-        {
-          prod_nombre: "book6",
-          prod_precio: 3,
-          prod_stock: "2016",
-          prod_descripcion: "2016",
-        },
-      ],
     };
   },
   created: function() {

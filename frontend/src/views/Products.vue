@@ -234,7 +234,7 @@ export default {
     // GUARDA un producto en la tabla
     save () {
       console.log("Dentro de save");
-      console.log(this.editedItem)
+      console.log(this.editedItem);
 
       if (this.editedIndex > -1) {
         Object.assign(this.lista_productos[this.editedIndex], this.editedItem);
