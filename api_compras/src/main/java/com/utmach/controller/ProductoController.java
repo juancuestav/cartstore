@@ -82,18 +82,7 @@ public class ProductoController {
 		return new ResponseEntity(lista, HttpStatus.OK);
 	}
 	
-	/*@CrossOrigin(origins = "http://localhost:8090")
-	@GetMapping("/foto/{id}")
-	public ResponseEntity<?> foto_c(@PathVariable("id") Integer id) {
-		byte[] foto = null;
-		try {
-			foto = productoService.foto_s(id);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new ResponseEntity(foto, HttpStatus.OK);
-	}*/
+	
 	
 	
 	
@@ -110,4 +99,30 @@ public class ProductoController {
 		return new ResponseEntity<Object>("Producto eliminado!", HttpStatus.OK);
 	}
 	
+	
+	// Tabla Compra
+	@CrossOrigin(origins = "http://localhost:8090")
+	@PostMapping("/comprar")//Tabla Compra
+	public ResponseEntity<?> comprar(@RequestParam("USUARIO_ID") Integer usuario_id, @RequestParam("SUBTOTAL") Double subtotal, @RequestParam("IVA") Double iva, @RequestParam("TOTAL") Double total) {
+		System.out.println("id: " + usuario_id + " subtotal: " + subtotal + " iva: " + iva + " total: " + total);
+		try {
+			productoService.comprar_s(usuario_id, subtotal, iva, total);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Object>("Compra registrada!", HttpStatus.OK);
+	}
+	
+	
+	// Tabla Detalle Compra
+	@CrossOrigin(origins = "http://localhost:8090")
+	@PostMapping("/detallecompra")//Tabla Detalle Compra
+	public ResponseEntity<?> detalle_compra(@RequestParam("PRODUCT_ID") Integer prod_id, @RequestParam("CANTIDAD") Integer cantidad) {
+		try {
+			productoService.detalle_compra_s(prod_id, cantidad);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Object>("Detalle compra registrada!", HttpStatus.OK);
+	}
 }

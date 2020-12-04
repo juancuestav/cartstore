@@ -139,7 +139,7 @@ export default {
       })
     },
     realizarPago(){
-      console.log("Tienes que pagar: " + this.sub_total)
+      console.log("Tienes que pagar: " + this.total_pagar)
     }
   },
 

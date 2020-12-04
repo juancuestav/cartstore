@@ -18,6 +18,7 @@ import com.utmach.entity.Producto;
 public class ProductoRepository {
 	
 	private final EntityManager entityManager;
+	private static Integer id_compra;
 	 
     @Autowired
     public ProductoRepository(final EntityManager entityManager) {
@@ -74,29 +75,8 @@ public class ProductoRepository {
 		return p;
 		
 		
-		/*TypedQuery<Producto> q = entityManager.createNamedQuery("OBTENER_PRODUCTO", Producto.class);
-		q.setParameter("?", 101);
-		
-		Producto prod = null;
-		List<Producto> lista = q.getResultList();
-		System.out.print("Valores de la lista: " + lista);
-		for(Producto p : lista) {
-			prod = p;
-			System.out.println(p.getNombre());
-		}*/
 	}
-	
-	// Obtener ruta de foto de un producto
-		/*public String foto_r(Integer id) {
-			StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ECOMMERCE.FOTO_PRODUCTO");
-			storedProcedureQuery.registerStoredProcedureParameter("ID", Integer.class, ParameterMode.IN);
-			storedProcedureQuery.registerStoredProcedureParameter("FOTO", String.class, ParameterMode.OUT);
-			
-			storedProcedureQuery.setParameter("ID", id);
-			storedProcedureQuery.execute();
-			String foto = (String) storedProcedureQuery.getOutputParameterValue("FOTO");
-			return foto;
-		}*/
+
 	
 	
 	// Guardar un producto
@@ -118,6 +98,65 @@ public class ProductoRepository {
  
         storedProcedureQuery.execute();
 	}
+	
+	
+	
+	// Tabla Compra
+	public void comprar_r(Integer usuario_id, Double subtotal, Double iva, Double total) {
+		StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ecommerce.COMPRAR_PRODUCTOS");
+        
+        storedProcedureQuery.registerStoredProcedureParameter("USUARIO_ID", Integer.class, ParameterMode.IN);
+        storedProcedureQuery.registerStoredProcedureParameter("SUBTOTAL", Double.class, ParameterMode.IN);
+        storedProcedureQuery.registerStoredProcedureParameter("IVA", Double.class, ParameterMode.IN);
+        storedProcedureQuery.registerStoredProcedureParameter("TOTAL", Double.class, ParameterMode.IN);
+        storedProcedureQuery.registerStoredProcedureParameter("ID_COMPRA", Integer.class, ParameterMode.OUT);
+ 
+        storedProcedureQuery.setParameter("USUARIO_ID", usuario_id);
+        storedProcedureQuery.setParameter("SUBTOTAL", subtotal);
+        storedProcedureQuery.setParameter("IVA", iva);
+        storedProcedureQuery.setParameter("TOTAL", total);
+        
+        storedProcedureQuery.execute();
+        
+        id_compra = (Integer) storedProcedureQuery.getOutputParameterValue("ID_COMPRA");
+        System.out.println("Valor de id compra(1): " + id_compra);
+
+	}
+	
+	
+	// Tabla Detalle Compra
+		public void detalle_compra_r(Integer prod_id, Integer cantidad) {
+			System.out.println("Valor de id compra: " + id_compra);
+			StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ecommerce.AGREGAR_DETALLE_COMPRA");
+	        
+	        storedProcedureQuery.registerStoredProcedureParameter("PRODUCT_ID", Integer.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("COMP_ID", Integer.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("CANTIDAD", Integer.class, ParameterMode.IN);
+	 
+	        storedProcedureQuery.setParameter("PRODUCT_ID", prod_id);
+	        storedProcedureQuery.setParameter("COMP_ID", id_compra);
+	        storedProcedureQuery.setParameter("CANTIDAD", cantidad);
+	        
+	        storedProcedureQuery.execute();
+	        
+	        minimizar_stock_r(prod_id, cantidad);
+		}
+		
+		
+		// Minimizar cantidad en stock
+		private void minimizar_stock_r(Integer prod_id, Integer cantidad) {
+			StoredProcedureQuery storedProcedureQuery = entityManager.createStoredProcedureQuery("ecommerce.MINIMIZAR_STOCK_PRODUCTO");
+	        
+	        storedProcedureQuery.registerStoredProcedureParameter("ID", Integer.class, ParameterMode.IN);
+	        storedProcedureQuery.registerStoredProcedureParameter("CANTIDAD", Integer.class, ParameterMode.IN);
+	 
+	        storedProcedureQuery.setParameter("ID", prod_id);
+	        storedProcedureQuery.setParameter("CANTIDAD", cantidad);
+	        
+	        storedProcedureQuery.execute();
+		}
+		
+		
 	
 	
 	
