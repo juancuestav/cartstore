@@ -62,7 +62,7 @@ public class ProductoService {
 		
 		Producto p = new Producto();
 		
-		if (!foto.isEmpty()) {
+		if (foto!=null) {
 			// Guarda la nueva foto
 			byte[] bytes = foto.getBytes();
 			String name = foto.getOriginalFilename();
@@ -77,16 +77,14 @@ public class ProductoService {
 			p.setFoto(name);
 			p.setNombres(nombre);
 			p.setPrecio(precio);
-			p.setStock(stock);
-			
-			
+			p.setStock(stock);	
 		}else {
-			
+
 			p.setId(id);
 			p.setDescripcion(descripcion);
 			p.setNombres(nombre);
 			p.setPrecio(precio);
-			p.setStock(stock);
+			p.setStock(stock);			
 			
 			System.out.print("Actualizar sin foto(Valor de foto): " + p.getFoto());
 		}

@@ -283,7 +283,7 @@ export default {
             this.lista_productos.push(producto);
           });
         });
-      }, 800);
+      }, 1000);
     },
     // Muestra la imagen cargada en un v-img
     obtenerImagen(event) {
@@ -387,20 +387,6 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
-    },
-
-    // GUARDA un producto en la tabla
-    save() {
-      console.log("Dentro de save");
-      console.log(this.editedItem);
-
-      if (this.editedIndex > -1) {
-        Object.assign(this.lista_productos[this.editedIndex], this.editedItem);
-      } else {
-        this.lista_productos.push(this.editedItem);
-        this.guardar();
-      }
-      this.close();
     },
   },
   notifications: {
