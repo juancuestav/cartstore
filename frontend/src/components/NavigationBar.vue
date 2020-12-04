@@ -6,10 +6,14 @@
         <v-icon left small> fas fa-home </v-icon>
         Home
       </v-btn>
-      <v-btn text redounded :to="{ name: 'Carshop' }">
-        <v-icon left small> fas fa-shopping-cart </v-icon>
-        Carrito
-      </v-btn>
+      <div v-if="currentDataUser.us_rol != 'ADMINISTRADOR'">
+        <v-badge color="white black--text" :content="carrito.length.toString()" overlap>
+          <v-btn text redounded :to="{ name: 'Carshop' }">
+            <v-icon left small> fas fa-shopping-cart </v-icon>
+            Carrito
+          </v-btn>
+        </v-badge>
+      </div>
       <!---<v-spacer></v-spacer>
       <v-text-field
         class="mt-4"
@@ -361,6 +365,9 @@ export default {
     currentDataUser() {
       return this.$store.state.datosUsuario;
     },
+    carrito() {
+      return this.$store.state.indiceCarrito;
+    },
   },
   methods: {
     Login() {
@@ -398,9 +405,11 @@ export default {
     Salir() {
       this.$store.dispatch("auth/logout");
       this.$store.state.datosUsuario = {};
+      this.$store.state.indiceCarrito = [];
       if (this.$route.name != "Home") {
         this.$router.push({ name: "Home" });
       }
+      
     },
     RegistrarUsuario() {
       if (

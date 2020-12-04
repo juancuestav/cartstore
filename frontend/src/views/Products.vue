@@ -160,7 +160,7 @@
           <v-dialog v-model="dialogDelete" max-width="500px">
             <v-card>
               <v-card-title class="headline"
-                >Are you sure you want to delete this item?</v-card-title
+                >¿Esta seguro de eliminar este producto?</v-card-title
               >
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -192,10 +192,10 @@
         </div>
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-icon class="mr-2" @click="cargarInfoProduct(item)"
+        <v-icon class="mr-2" @click="cargarInfoProduct(item)" color="blue"
           >mdi-pencil</v-icon
         >
-        <v-icon @click="deleteItem(item.id)"> mdi-delete</v-icon>
+        <v-icon @click="deleteItem(item.id)" color="red"> mdi-delete</v-icon>
       </template>
     </v-data-table>
   </v-container>
@@ -283,7 +283,7 @@ export default {
             this.lista_productos.push(producto);
           });
         });
-      }, 1000);
+      }, 500);
     },
     // Muestra la imagen cargada en un v-img
     obtenerImagen(event) {

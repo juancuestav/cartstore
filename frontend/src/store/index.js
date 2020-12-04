@@ -8,7 +8,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     datosUsuario: {},
-    carrito_data_producto: []
+    carrito_data_producto: [],
+    indiceCarrito: []
   },
   mutations: {
   },

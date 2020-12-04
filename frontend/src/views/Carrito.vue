@@ -2,13 +2,16 @@
   <v-container>
     <v-row>
       <v-col md="8">
-
         <v-card>
           <v-data-table :headers="headers" :items="carrito_list" hide-default-footer >
 
             <!--<template v-slot:item.prod_image="{ item }">
               <div class="pa-2 d-flex flex-column align-center">
-                <v-img src="https://cdn.vuetifyjs.com/images/cards/cooking.png" height="120px" width="150px"></v-img>
+                <v-img
+                  src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                  height="120px"
+                  width="150px"
+                ></v-img>
               </div>
             </template>-->
 
@@ -27,42 +30,44 @@
             <template v-slot:item.actions="{ item }">
               <v-icon color="red"> mdi-delete </v-icon>
             </template>
-
           </v-data-table>
-
         </v-card>
-
       </v-col>
       <v-col md="4">
         <v-card>
-
-          <v-card-title class="blue-grey darken-1 white--text">Generar Compra</v-card-title>
+          <v-card-title class="blue-grey darken-1 white--text"
+            >Generar Compra</v-card-title
+          >
           <v-divider></v-divider>
-          
+
           <v-card-text>
             <v-container>
-
               <v-row>
                 <v-col cols="12">
                   <v-toolbar-title>Subtotal:</v-toolbar-title>
                 </v-col>
                 <v-col cols="12">
-                  <v-toolbar-title class="blue-grey lighten-5">{{sub_total}}</v-toolbar-title>
+                  <v-toolbar-title class="blue-grey lighten-5">{{
+                    sub_total
+                  }}</v-toolbar-title>
                 </v-col>
                 <v-col cols="12">
                   <v-toolbar-title>IVA 12%:</v-toolbar-title>
                 </v-col>
                 <v-col cols="12">
-                  <v-toolbar-title class="blue-grey lighten-5">{{iva}}</v-toolbar-title>
+                  <v-toolbar-title class="blue-grey lighten-5">{{
+                    iva
+                  }}</v-toolbar-title>
                 </v-col>
                 <v-col cols="12">
                   <v-toolbar-title>Total a Pagar:</v-toolbar-title>
                 </v-col>
                 <v-col cols="12">
-                  <v-toolbar-title class="blue-grey lighten-5">{{total_pagar}}</v-toolbar-title>
+                  <v-toolbar-title class="blue-grey lighten-5">{{
+                    total_pagar
+                  }}</v-toolbar-title>
                 </v-col>
               </v-row>
-
             </v-container>
           </v-card-text>
 
@@ -72,12 +77,11 @@
             <v-container>
               <v-row>
                 <v-col cols="12" class="py-0">
-                  <v-btn  @click="realizarPago" color="blue" class="ma-2 white--text" block >Realizar Pago</v-btn>
-                </v-col><!-- :to="{ name: 'Envio' }"-->
+                  <v-btn :to="{ name: 'Envio' }" @click="realizarPago" color="blue" class="ma-2 white--text" block >Realizar Pago</v-btn>
+                </v-col>
               </v-row>
             </v-container>
           </v-card-actions>
-
         </v-card>
       </v-col>
     </v-row>
@@ -90,7 +94,7 @@ export default {
   data() {
     return {
       servidor: "http://localhost:8080/",
-      carrito_indices: [121, 123],
+      carrito_indices: [],
       sub_total: 0,
       carrito_list: [],
       producto: {
@@ -110,16 +114,17 @@ export default {
     };
   },
   computed: {
-    iva: {
-      //return this.sub_total * 0.12;
-        get () { return this.addOnStartingPrice },
-        set (newVal) { this.$emit('update:addOnStartingPrice', newVal) }
+    iva() {
+      return this.sub_total * 0.12;  
     },
     total_pagar() {
       return (this.iva + this.sub_total).toFixed(2);
     }
   },
   mounted () {
+    
+    this.carrito_indices = this.$store.state.indiceCarrito;
+    console.log(this.carrito_indices)
     this.cargarInfo()
   },
   methods: {    
