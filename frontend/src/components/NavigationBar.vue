@@ -7,7 +7,11 @@
         Home
       </v-btn>
       <div v-if="currentDataUser.us_rol != 'ADMINISTRADOR'">
-        <v-badge color="white black--text" :content="carrito.length.toString()" overlap>
+        <v-badge
+          color="white black--text"
+          :content="carrito.length.toString()"
+          overlap
+        >
           <v-btn text redounded :to="{ name: 'Carshop' }">
             <v-icon left small> fas fa-shopping-cart </v-icon>
             Carrito
@@ -406,10 +410,10 @@ export default {
       this.$store.dispatch("auth/logout");
       this.$store.state.datosUsuario = {};
       this.$store.state.indiceCarrito = [];
+      this.$store.state.carrito_data_producto = [];
       if (this.$route.name != "Home") {
         this.$router.push({ name: "Home" });
       }
-      
     },
     RegistrarUsuario() {
       if (

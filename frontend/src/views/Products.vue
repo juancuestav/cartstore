@@ -56,7 +56,7 @@
                               rules.campoVacio(editedItem.precio),
                               rules.soloPositivos(editedItem.precio),
                             ]"
-                            error-count="3"
+                            error-count="2"
                             label="Precio"
                             type="number"
                           ></v-text-field>
@@ -69,7 +69,7 @@
                               rules.campoVacio(editedItem.stock),
                               rules.soloPositivos(editedItem.stock),
                             ]"
-                            error-count="3"
+                            error-count="2"
                             label="Stock"
                             type="number"
                           ></v-text-field>

@@ -26,10 +26,31 @@
 
           <div v-if="currentDataUser.us_rol != 'ADMINISTRADOR'">
             <v-card-actions class="justify-center">
-              <v-btn small color="blue" outlined @click="add_cart(producto.id)">
-                Agregar al carrito <v-icon medium right>mdi-cart</v-icon>
+              <div v-if="!carrito.includes(producto.id)">
+                <v-btn
+                  small
+                  color="blue"
+                  outlined
+                  @click="add_cart(producto.id)"
+                >
+                  Agregar al carrito <v-icon medium right>mdi-cart</v-icon>
+                </v-btn>
+              </div>
+              <div v-else>
+                <v-btn small color="green" outlined>
+                  Añadido al carrito
+                  <v-icon medium right>mdi-cart-check</v-icon>
+                </v-btn>
+              </div>
+              <v-btn
+                small
+                color="error"
+                depressed
+                style="margin-left: 5px"
+                @click="comprarAcarrito(producto.id)"
+              >
+                Comprar
               </v-btn>
-              <v-btn small color="error" depressed> Comprar </v-btn>
             </v-card-actions>
           </div>
         </v-card>
@@ -62,6 +83,12 @@ export default {
       if (!this.carrito.includes(id_prod)) {
         this.carrito.push(id_prod);
       }
+    },
+    comprarAcarrito(id_prod) {
+      if (!this.carrito.includes(id_prod)) {
+        this.carrito.push(id_prod);
+      }
+      this.$router.push({ name: "Carshop" });
     },
   },
   created: function () {
