@@ -3,18 +3,27 @@
     <v-row>
       <v-col md="8">
         <v-card>
-          <v-data-table
-            :headers="headers"
-            :items="carrito_list"
-            hide-default-footer
-          >
-            <template v-slot:item.prod_image="{ item }">
+          <v-data-table :headers="headers" :items="carrito_list" hide-default-footer >
+
+            <!--<template v-slot:item.prod_image="{ item }">
               <div class="pa-2 d-flex flex-column align-center">
                 <v-img
                   src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
                   height="120px"
                   width="150px"
                 ></v-img>
+              </div>
+            </template>-->
+
+            <template v-slot:item.foto="{ item }">
+              <div class="p-2 d-flex flex-column align-center">
+                <v-img :src="`${servidor}${item.foto}`" max-width="100px" contain style="margin: 10px 0px" ></v-img>
+              </div>
+            </template>
+
+            <template v-slot:item.stock="{ item }">
+              <div class="px-4 d-flex flex-column align-center">
+                <v-text-field type="number" v-model="item.stock"></v-text-field> 
               </div>
             </template>
 
@@ -68,13 +77,7 @@
             <v-container>
               <v-row>
                 <v-col cols="12" class="py-0">
-                  <v-btn
-                    :to="{ name: 'Envio' }"
-                    color="blue"
-                    class="ma-2 white--text"
-                    block
-                    >Realizar Pago</v-btn
-                  >
+                  <v-btn :to="{ name: 'Envio' }" @click="realizarPago" color="blue" class="ma-2 white--text" block >Realizar Pago</v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -90,9 +93,9 @@ import axios from "axios";
 export default {
   data() {
     return {
+      servidor: "http://localhost:8080/",
+      carrito_indices: [],
       sub_total: 0,
-      iva: 0,
-      total_pagar: 0,
       carrito_list: [],
       producto: {
         nombre: "",
@@ -102,84 +105,45 @@ export default {
         foto: null,
       },
       headers: [
-        {
-          text: "Nombre",
-          value: "nombre",
-          sortable: false,
-          class: "blue-grey accent-3 white--text",
-          align: "center",
-        },
-        {
-          text: "Imagen",
-          value: "foto",
-          sortable: false,
-          class: "blue-grey accent-3 white--text",
-          align: "center",
-        },
-        {
-          text: "Precio",
-          value: "precio",
-          sortable: false,
-          class: "blue-grey accent-3 white--text",
-          align: "center",
-        },
-        {
-          text: "Stock",
-          value: "stock",
-          sortable: false,
-          class: "blue-grey accent-3 white--text",
-          align: "center",
-        },
-        {
-          text: "Acciones",
-          value: "actions",
-          sortable: false,
-          class: "blue-grey accent-3 white--text",
-          align: "center",
-        },
+        {text: "Nombre", value: "nombre", sortable: false, class: "blue-grey accent-3 white--text", align: "center",},
+        {text: "Imagen", value: "foto", sortable: false, class: "blue-grey accent-3 white--text", align: "center",},
+        {text: "Precio", value: "precio", sortable: false, class: "blue-grey accent-3 white--text", align: "center",},
+        {text: "Cantidad", value: "stock", sortable: false, class: "blue-grey accent-3 white--text", align: "center",},
+        {text: "Acciones", value: "actions", sortable: false, class: "blue-grey accent-3 white--text", align: "center",},
       ],
     };
   },
   computed: {
-    carrito() {
-      return this.$store.state.indiceCarrito;
+    iva() {
+      return this.sub_total * 0.12;  
     },
+    total_pagar() {
+      return (this.iva + this.sub_total).toFixed(2);
+    }
   },
-  created: function () {
-    //console.log("Este es el sub total CR: " + this.sub_total)
-    //console.log("Carrito lleno")
-    //console.log(this.carrito_list)
+  mounted () {
+    
+    this.carrito_indices = this.$store.state.indiceCarrito;
+    console.log(this.carrito_indices)
+    this.cargarInfo()
   },
-  mounted: function () {
-    console.log("Dentro de created");
-    this.carrito.forEach((indice) => {
-      axios
-        .get("http://localhost:8080/productos/getproductscarrito/" + indice)
-        .then((response) => {
-          console.log(response.data);
-          //this.producto = Object.assign({}, response.data)
-          /*var parsedobj = JSON.parse(JSON.stringify(response.data));
-          console.log(parsedobj);
-          this.carrito_list.push(parsedobj);*/
-          //console.log("Este es el precio: " + response.data.precio)
-          //console.log("Este es el sub total: " + this.sub_total)
-        });
-    });
-    //this.$nextTick(() => {
+  methods: {    
+    cargarInfo(){
+      this.carrito_indices.forEach(indice => {
+      axios.get("http://localhost:8080/productos/getproductscarrito/" + indice).then((response) => {
+        this.carrito_list.push(response.data);
+        this.sub_total += response.data.precio;
+      });
 
-    /*console.log("Dentro de mounted");
-    console.log(this.carrito_list);
-    console.log(this.carrito_list[0]);
-    this.carrito_list.forEach((item) => {
-      console.log("Dentro de for each");
-      this.sub_total += item.precio;
-      console.log("Este es el sub total MOU: " + this.sub_total);
-      this.iva = this.sub_total * 0.12;
-      //this.iva = 35;
-      console.log("Este es el IVA MOU: " + this.iva);
-      this.total_pagar += this.iva + this.sub_total;
-    });*/
-    //})
+    
+      })
+    },
+    realizarPago(){
+      console.log("Tienes que pagar: " + this.sub_total)
+    }
   },
-};
+
+  
+
+}
 </script>
