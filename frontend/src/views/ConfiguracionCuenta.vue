@@ -262,6 +262,7 @@
                     rules.campoVacio(pagoUpdate.pago_numero_tarj),
                     rules.diezSeisCaracteres(pagoUpdate.pago_numero_tarj),
                   ]"
+                  error-count="3"
                 ></v-text-field>
                 <v-text-field
                   label="Nombre del titular"

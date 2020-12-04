@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,8 @@ public class ProductoController {
 	// ACTUALIZAR
 	@CrossOrigin(origins = "http://localhost:8090")
 	@PutMapping("/actualizar/{id}")
-	public ResponseEntity<?> actualizar(@PathVariable("id") Integer id, @RequestParam("foto") MultipartFile foto, @RequestParam("descripcion") String descripcion, @RequestParam("nombre") String nombre, @RequestParam("precio") Double precio, @RequestParam("stock") Integer stock) {
+	//@RequestMapping(value = "/actualizar/{id}", method = RequestMethod.PUT, consumes = "multipart/form-data")
+	public ResponseEntity<?> actualizar(@PathVariable("id") Integer id, @RequestParam(name="foto" , required = false) MultipartFile foto, @RequestParam("descripcion") String descripcion, @RequestParam("nombre") String nombre, @RequestParam("precio") Double precio, @RequestParam("stock") Integer stock) {
 		try {
 			productoService.actualizarProducto_s(id, foto, descripcion, nombre, precio, stock);
 			//productoService.guardar_s(foto, descripcion, nombre, precio, stock);
