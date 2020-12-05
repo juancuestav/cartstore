@@ -103,13 +103,14 @@
               <v-row>
                 <v-col cols="12" class="py-0">
                   <v-btn
-                    :to="{ name: 'Envio' }"
                     @click="realizarPago"
                     color="blue"
                     class="ma-2 white--text"
                     block
-                    
-                    >Realizar Pago</v-btn><!-- :disabled="!loggedIn"-->
+                    :disabled="!loggedIn"
+                    >Realizar Pago</v-btn
+                  ><!-- 
+                    :to="{ name: 'Envio' }" -->
                 </v-col>
               </v-row>
             </v-container>
@@ -204,6 +205,9 @@ export default {
     datosCarrito() {
       return this.$store.state.carrito_data_producto;
     },
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
   },
   mounted() {
     this.carrito_indices = this.$store.state.indiceCarrito;
@@ -281,32 +285,52 @@ export default {
       }
     },
     async realizarPago() {
-      
       let formdata = new FormData();
-      formdata.append("USUARIO_ID", 1);
+      formdata.append("USUARIO_ID", this.currentUser.id);
       formdata.append("SUBTOTAL", this.sub_total);
       formdata.append("IVA", this.iva);
       formdata.append("TOTAL", this.total_pagar);
 
       let response = await ProductService.registrar_compra(formdata);
       if (response.status == 200) {
-        console.log("Registro de compra correcto!")
+        //console.log("Registro de compra correcto!");
       }
 
-
       let longitud = this.$store.state.indiceCarrito.length;
-      for(let i = 0 ; i < longitud ; i++){
+      for (let i = 0; i < longitud; i++) {
         let formdata = new FormData();
         formdata.append("PRODUCT_ID", this.$store.state.indiceCarrito[i]);
         formdata.append("CANTIDAD", this.carrito_list[i].cantidad_comprar);
 
         let response = await ProductService.registrar_detalle_compra(formdata);
-        if (response.status == 200) {
-          console.log("Registro de detalle de compra correcto!")
-        }
       }
-
+      if (response.status == 200) {
+        //console.log("Registro de detalle de compra correcto!");
+        this.showSuccess({ message: "Registro de compra correcto!" });
+        this.$store.state.carrito_data_producto = [];
+        this.$store.state.indiceCarrito = [];
+        this.carrito_indices = [];
+        this.sub_total = 0;
+        this.carrito_list = [];
+        this.producto = {
+          nombre: "",
+          descripcion: "",
+          precio: "",
+          stock: "",
+          foto: null,
+        };
+      }
     },
+  },
+  notifications: {
+    showSuccess: {
+      title: "Éxito",
+      message: "",
+      type: "success",
+      timeout: 3000,
+    },
+    showError: { title: "Error", message: "", type: "error", timeout: 3000 },
+    showWarning: { title: "Aviso", message: "", type: "warn", timeout: 3000 },
   },
 };
 </script>

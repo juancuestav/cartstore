@@ -1,0 +1,23 @@
+-- FUNCION PARA OBTENER LAS COMPRAS DE UN CLIENTE
+CREATE OR REPLACE FUNCTION obtener_pedidos(id_usuario usuario.us_id%type)
+RETURN SYS_REFCURSOR
+AS 
+pedidos_us SYS_REFCURSOR;
+BEGIN
+    OPEN pedidos_us FOR  select compra.comp_id, producto.prod_nombre, producto.prod_descripcion, producto.prod_precio, detalle_compra.det_cantidad, compra.comp_total
+        from usuario, compra, detalle_compra, producto where usuario.us_id = id_usuario and compra.comp_us_id = id_usuario AND compra.comp_id = detalle_compra.det_comp_id 
+         AND producto.prod_id = detalle_compra.det_prod_id;
+    return pedidos_us;
+END;
+
+-- FUNCION PARA OBTENER UNA LSITA DE TODAS LAS COMPRAS DE LOS CLIENTES
+CREATE OR REPLACE FUNCTION listar_compras_clientes
+RETURN SYS_REFCURSOR
+AS 
+pedidos_us SYS_REFCURSOR;
+BEGIN
+    OPEN pedidos_us FOR  select compra.comp_id, usuario.us_nombres,usuario.us_apellidos,  producto.prod_nombre, producto.prod_descripcion, compra.comp_fecha, producto.prod_precio, detalle_compra.det_cantidad, compra.comp_total
+        from usuario, compra, detalle_compra, producto where   compra.comp_us_id = usuario.us_id AND compra.comp_id = detalle_compra.det_comp_id 
+         AND producto.prod_id = detalle_compra.det_prod_id;
+    return pedidos_us;
+END;

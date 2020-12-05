@@ -84,19 +84,31 @@
               <h1 class="text-center display-1 blue-grey--text text--accent-3">
                 {{ titleDialogDireccion }} dirección
               </h1>
-              <v-form class="px-8 pt-2">
+              <v-form
+                class="px-8 pt-2"
+                ref="formDireccion"
+                v-model="isValidFormDireccion"
+              >
                 <v-text-field
                   v-model="direccion.dir_direccion"
+                  :rules="[rules.campoVacio(direccion.dir_direccion)]"
                   label="Dirección"
                   color="blue-grey accent-3"
                 ></v-text-field>
                 <v-text-field
                   v-model="direccion.dir_referencia"
+                  :rules="[rules.campoVacio(direccion.dir_referencia)]"
                   label="Referencia"
                   color="blue-grey accent-3"
                 ></v-text-field>
                 <v-text-field
                   v-model="direccion.dir_telefono"
+                  :rules="[
+                    rules.campoVacio(direccion.dir_telefono),
+                    rules.soloNumeros(direccion.dir_telefono),
+                    rules.soloPositivos(direccion.dir_telefono),
+                  ]"
+                  error-count="3"
                   label="Teléfono"
                   color="blue-grey accent-3"
                   v-on:keyup.enter="agregar"
@@ -105,14 +117,19 @@
             </v-card-text>
             <div v-if="titleDialogDireccion == 'Registrar'">
               <div class="text-center">
-                <v-btn color="blue-grey accent-3" dark @click="agregar"
+                <v-btn
+                  color="blue-grey accent-3 white--text"
+                  @click="agregar"
+                  :disabled="!isValidFormDireccion"
                   >Agregar</v-btn
                 >
               </div>
             </div>
             <div v-else>
               <div class="text-center">
-                <v-btn color="blue-grey accent-3" dark @click="actualizar"
+                <v-btn
+                  color="blue-grey accent-3 white--text"
+                  @click="actualizar"
                   >Actualizar</v-btn
                 >
               </div>
@@ -138,6 +155,15 @@ export default {
       titleDialogDireccion: "",
       valid: false,
       direcciones: [],
+      rules: {
+        campoVacio: (texto) => !!texto || "Campo requerido!",
+        soloNumeros: (texto) =>
+          Number.isInteger(Number(texto)) || "Ingresar sólo números",
+        soloNumerosYDecimal: (texto) =>
+          Number.isInteger(Number(texto)) || "Ingresar sólo números",
+        soloPositivos: (texto) =>
+          Number(texto) >= 0 || "No se permiten cantidades negativas",
+      },
     };
   },
   computed: {
@@ -151,6 +177,7 @@ export default {
   methods: {
     closeDialog() {
       this.dialogDireccion = false;
+      this.$refs.formDireccion.resetValidation();
     },
     agregar() {
       if (
@@ -167,6 +194,7 @@ export default {
             this.closeDialog();
             this.limpiarForm();
             this.cargarDirecciones();
+            this.$refs.formDireccion.resetValidation();
           }
         });
       } else {
@@ -190,6 +218,7 @@ export default {
           this.closeDialog();
           this.limpiarForm();
           this.cargarDirecciones();
+          this.$refs.formDireccion.resetValidation();
         }
       });
     },

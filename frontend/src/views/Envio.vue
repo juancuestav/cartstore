@@ -73,7 +73,7 @@ export default {
   data() {
     return {
        Items: [
-        { dato: 'Dirección 1 ', nombre: 'Juanito', direccion:'Av.Jubones', ciudad:'Machala', pais:'Ecuador', postal:'101256', telefono:'0923571820'},
+        { dato: 'Dirección 1 ', nombre: 'Alvaro Vargas', direccion:'Av.Jubones', ciudad:'Machala', pais:'Ecuador', postal:'101256', telefono:'0923571820'},
         ],
     };
   },

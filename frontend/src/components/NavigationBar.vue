@@ -81,7 +81,7 @@
             </template>
 
             <v-list>
-              <v-list-item-group>
+              <!--<v-list-item-group>
                 <v-list-item dense :to="{ name: 'Pedidos' }">
                   <v-list-item-icon>
                     <v-icon left dense>fas fa-shopping-basket</v-icon>
@@ -91,7 +91,7 @@
                       >Tus pedidos</v-list-item-title
                     >
                   </v-list-item-content>
-                </v-list-item>
+                </v-list-item>-->
 
                 <v-list-item dense :to="{ name: 'Cuenta' }">
                   <v-list-item-icon>
@@ -354,6 +354,7 @@ export default {
           return pattern.test(texto) || "Ingrese un correo electrónico válido!";
         },
       },
+      isValidFormDireccion: true,
     };
   },
   props: {
